@@ -1,0 +1,29 @@
+groups:
+- name:  rules
+  rules:
+#  - alert: KubeSchedulerDown
+#    expr: absent(up{job="kube-scheduler"} == 1)
+#    for: 1m
+#    labels:
+#      severity: critical
+#    annotations:
+#      description: KubeScheduler has disappeared from Prometheus target discovery.
+#      runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubeschedulerdown
+#      summary: Target disappeared from Prometheus target discovery.
+   - alert: KubernetesMemoryPressure
+     expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+     for: 1m
+     labels:
+       severity: critical
+     annotations:
+       summary: Kubernetes memory pressure 
+       description: "k8s现在有内存压力，请尽快处理。"
+
+
+
+
+
+
+
+
+

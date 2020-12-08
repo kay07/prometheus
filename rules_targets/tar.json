@@ -1,0 +1,10 @@
+[
+ {
+   "targets":["192.168.0.170:30105"],
+   "labels":{"name": "kube-state-metrics"}
+ },
+ {
+   "targets":["192.168.0.170:30104"],
+   "labels":{"name": "alert"}
+ }
+]

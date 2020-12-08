@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alertmanager-config
+  namespace: prometheus
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m                     
+      smtp_from: 'laokiao@163.com'                   ###发送者邮箱
+      smtp_smarthost: 'smtp.163.com:465'             ###邮箱的SMTP服务器地址465
+      smtp_auth_username: 'laokiao@163.com'		     ###发送者邮箱
+      smtp_auth_password: '******'		             ###使用邮箱生成的授权码,并非邮箱密码
+      smtp_require_tls: false
+    route:
+      group_by: ['alertname']
+      group_wait: 5s
+      group_interval: 5s
+      repeat_interval: 5m
+      receiver: 'email'
+    receivers:
+    - name: 'email'
+      email_configs:
+      - to: '123@qq.com'                             ###接收者邮箱
+        send_resolved: true
+    inhibit_rules:
+      - source_match:
+          severity: 'critical'
+        target_match:
+          severity: 'warning'
+        equal: ['alertname', 'dev', 'instance']

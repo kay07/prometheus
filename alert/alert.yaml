@@ -1,0 +1,61 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: prometheus-alertmanager
+  name: prometheus-alertmanager
+  namespace: prometheus
+spec:
+  type: NodePort
+  ports:
+    - port: 9093
+      targetPort: 9093
+      nodePort: 30104
+  selector:
+    app: prometheus-alertmanager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus-alertmanager
+  name: prometheus-alertmanager
+  namespace: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-alertmanager
+  template:
+    metadata:
+      labels:
+        app: prometheus-alertmanager
+    spec:
+      containers:
+        - image: prom/alertmanager:v0.21.0
+          name: prometheus-alertmanager
+          # command:
+          # - "/bin/prometheus"
+          args:
+            - "--config.file=/config/alertmanager.yml"
+          ports:
+            - containerPort: 9093
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/alertmanager"
+              name: data
+            - mountPath: "/config"
+              name: config-volume
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 2500Mi
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config-volume
+          configMap:
+            name: prometheus-alertmanager-config
